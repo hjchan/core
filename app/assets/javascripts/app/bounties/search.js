@@ -44,7 +44,6 @@ angular.module('app').controller('BountiesSearchController', function($scope, $r
 
   $scope.do_tracker_typeahead = function($viewValue) {
     return $api.tracker_typeahead($viewValue).then(function (trackers) {
-      debugger
       $scope.$watch('trackers_input', function(newValue, oldValue, scope) {
         for (var i = 0; i < trackers.length; i++) {
           if (!newValue) {

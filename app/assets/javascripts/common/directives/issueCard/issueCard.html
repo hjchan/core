@@ -10,7 +10,7 @@
         <a ng-href="/issues/{{issue.slug}}">
           {{issue.title}}
         </a>
-        <span>Posted by: {{issue.author.name}}</span>
+        <span>Posted by: {{issue.author.display_name}}</span>
         <span>{{issue.created_at | timeAgoShort }}</span>
         <p>{{issue.description}}</p>
         <span class="badge search-filter" ng-repeat="language in issue.tracker.languages">
