@@ -37,7 +37,6 @@ class Api::V1::SearchesController < ApplicationController
     options = {
       search: params[:search],
       page: params[:page],
-      per_page: params[:per_page],
       languages: params[:languages],
       trackers: params[:trackers],
       min: params[:min],

@@ -3,7 +3,7 @@ angular.module('app').controller('BountiesSearchController', function($scope, $r
     $scope.form_data = {
       direction: "desc",
       order: "bounty_total",
-      can_add_bounty: "all",
+      can_add_bounty: "true",
       languages: [],
       trackers: []
     };
@@ -11,63 +11,84 @@ angular.module('app').controller('BountiesSearchController', function($scope, $r
 
   $scope.reset_form_data();
 
+  // sets drop-down bounty types
+  $scope.bounty_types = ["Show All Bounties", "Crypto Bounties Only", "Cash Bounties Only"];
+  $scope.bountyType = $scope.bounty_types[0];
+
   //sets drop-down sorting options
-  $scope.sort_options = [
-    { label: "Bounty Total", value: "bounty_total"},
-    { label: "Age of Issue", value: "remote_created_at"},
-    { label: "Number of Backers", value: "backers_count"},
-    { label: "Date Bounty Posted", value: "earliest_bounty"}
-  ];
+  $scope.sort_options = {
+    option1 : { label: "Value (Highest to Lowest)", value: "bounty_total", direction: "desc"},
+    option2 : { label: "Value (Lowest to Highest)", value: "bounty_total", direction: "asc"},
+    option3 : { label: "Date (Newest to Oldest", value: "earliest_bounty", direction: "desc"},
+    option4 : { label: "Date (Oldest to Newest", value: "earliest_bounty", direction: "asc"},
+    option5 : { label: "Backers (Most to Least)", value: "backers_count", direction: "desc"},
+    option6 : { label: "Backers (Least to Most)", value: "backers_count", direction: "asc"}
+  };
+  $scope.selectedSort = $scope.sort_options.option1;
 
-  //renders direction toggle button
-  $scope.update_direction = function(order) {
-    var asc_string, desc_string;
-    switch(order) {
-    case "bounty_total":
-      asc_string = "Lowest";
-      desc_string = "Highest";
-      break;
-    case "remote_created_at":
-      asc_string = "Oldest";
-      desc_string = "Newest";
-      break;
-    case "backers_count":
-      asc_string = "Least";
-      desc_string= "Most";
-      break;
-    case "earliest_bounty":
-      asc_string = "Oldest";
-      desc_string = "Newest";
-      break;
-    default:
-      asc_string = "Asc";
-      desc_string = "Desc";
-      break;
-    }
-    return { asc: asc_string, desc: desc_string };
+  // update order and direction when options change
+  $scope.updateSort = function(selectedSort) {
+    $scope.form_data.order = selectedSort.value;
+    $scope.form_data.direction = selectedSort.direction;
+  }
+
+  // toggle advanced search collapse
+  $scope.toggle_advanced_search = function () {
+    $scope.show_advanced_search = !$scope.show_advanced_search;
   };
 
-  // $api.issues_featured().then(function(issues) {
-  //   $scope.featured_issues = $filter('shuffle')(issues).slice(0,5);
-  //   return issues;
-  // });
-
-  //toggles column order and submits query
-  $scope.change_order_col = function(col, page) {
-    if ($scope.form_data.order === col) {
-      if ($scope.form_data.direction === 'asc') {
-        $scope.form_data.direction = 'desc';
-      } else {
-        $scope.form_data.direction = 'asc';
-      }
-    }
-    $scope.form_data.order = col;
-
-    $scope.submit_query(page);
-  };
-
+  // trackers search
   $scope.trackers_to_load_from_params = [];
   $scope.trackers_loaded = [];
+  $scope.tracker = {};
+
+  $scope.do_tracker_typeahead = function($viewValue) {
+    return $api.tracker_typeahead($viewValue).then(function (trackers) {
+      debugger
+      $scope.$watch('trackers_input', function(newValue, oldValue, scope) {
+        for (var i = 0; i < trackers.length; i++) {
+          if (!newValue) {
+            break;
+          }
+          if (newValue.id === trackers[i].id) {
+            scope.trackers_loaded.push(newValue);
+            scope.form_data.trackers.push(trackers[i].id);
+            scope.trackers_input = "";
+            break;
+          }
+        }
+      });
+
+      return trackers;
+    });
+  };
+
+  $scope.$watch('trackers_to_load_from_params', function(newValue, oldValue, scope) {
+    if (newValue && newValue.length > 0) {
+      var ids = newValue.join(",");
+      $api.trackers_get_bulk(ids).then(function(response) {
+        if (!response.error) {
+          $scope.trackers_loaded = $scope.trackers_loaded.concat(response);
+        }
+      });
+    }
+  });
+  
+  //removes trackers from trackers_loaded array
+  $scope.remove_tracker = function(tracker) {
+    for (var i=0;i<$scope.trackers_loaded.length;i++) {
+      if (tracker.id === $scope.trackers_loaded[i].id) {
+        $scope.trackers_loaded.splice(i, 1);
+        break;
+      }
+    }
+    for (var e=0;e<$scope.form_data.trackers.length;e++) {
+      if (tracker.id === $scope.form_data.trackers[e]) {
+        $scope.form_data.trackers.splice(e, 1);
+        break;
+      }
+    }
+  };
 
   $scope.languages_to_load_from_params = [];
   $scope.languages_loaded = [];
@@ -129,50 +150,12 @@ angular.module('app').controller('BountiesSearchController', function($scope, $r
     }
   };
 
-  $scope.do_tracker_typeahead = function($viewValue) {
-    return $api.tracker_typeahead($viewValue).then(function (trackers) {
-
-      $scope.$watch('trackers_input', function(newValue, oldValue, scope) {
-        for (var i = 0; i < trackers.length; i++) {
-          if (!newValue) {
-            break;
-          }
-          if (newValue.id === trackers[i].id) {
-            scope.trackers_loaded.push(newValue);
-            scope.form_data.trackers.push(trackers[i].id);
-            scope.trackers_input = "";
-            break;
-          }
-        }
-      });
-
-      return trackers;
-    });
-  };
-
-  //removes trackers from trackers_loaded array
-  $scope.remove_tracker = function(tracker) {
-    for (var i=0;i<$scope.trackers_loaded.length;i++) {
-      if (tracker.id === $scope.trackers_loaded[i].id) {
-        $scope.trackers_loaded.splice(i, 1);
-        break;
-      }
-    }
-    for (var e=0;e<$scope.form_data.trackers.length;e++) {
-      if (tracker.id === $scope.form_data.trackers[e]) {
-        $scope.form_data.trackers.splice(e, 1);
-        break;
-      }
-    }
-  };
-
   $scope.submit_query = function(page) {
 
     if (!page) {
       $scope.loading_search_results = true;
     }
 
-    $scope.form_data.per_page = 50;
     $scope.form_data.page = page || 1;
     var cleaned_form_data = clean_object($scope.form_data);
     $location.search(cleaned_form_data);
@@ -231,26 +214,11 @@ angular.module('app').controller('BountiesSearchController', function($scope, $r
     return result;
   };
 
-  // toggle advanced search collapse
-  $scope.toggle_advanced_search = function () {
-    $scope.show_advanced_search = !$scope.show_advanced_search;
-  };
-
   //updates pagination. resubmits query with new page number.
   $scope.updatePage = function(page) {
     $scope.submit_query(page);
   };
 
-  $scope.$watch('trackers_to_load_from_params', function(newValue, oldValue, scope) {
-    if (newValue && newValue.length > 0) {
-      var ids = newValue.join(",");
-      $api.trackers_get_bulk(ids).then(function(response) {
-        if (!response.error) {
-          $scope.trackers_loaded = $scope.trackers_loaded.concat(response);
-        }
-      });
-    }
-  });
 
   $scope.populate_form_data_with_route_params = function() {
     $scope.reset_form_data();

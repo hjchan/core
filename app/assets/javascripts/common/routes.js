@@ -13,6 +13,19 @@ angular.module('app').config(function ($routeProvider, defaultRouteOptions, pers
     }
   }, defaultRouteOptions));
 
+  $routeProvider.when('/test', angular.extend({
+    templateUrl: 'app/home/landing_page.html',
+    controller: 'LandingPageController',
+    trackEvent: 'View Homepage',
+    resolve: {
+      count: function($rootScope, $api) {
+        $api.people_count().then(function(count) {
+          $rootScope.people_count = count;
+        });
+      }
+    }
+  }, defaultRouteOptions))
+
   $routeProvider.when('/fees', angular.extend({
     templateUrl: 'app/about/fees.html',
     controller: 'StaticPageController',

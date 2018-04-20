@@ -50,10 +50,8 @@ class Search < ApplicationRecord
   end
 
   def self.bounty_search(params)
-    create(query: "bounty search", params: params)
-
     page = params[:page] || 1
-    per_page = params[:per_page].to_i || 50
+    per_page = params[:per_page].present? ? params[:per_page].to_i : 50
     query = params[:search] || "*"
     min = params[:min].present? ? params[:min].to_f : 1.0
     max = params[:max].present? ? params[:max].to_f : 10_000.0
@@ -81,14 +79,14 @@ class Search < ApplicationRecord
     bounteous_issue_search = Issue.search(query, where: with_hash, 
       per_page: per_page, page: page, includes: [tracker: :languages],
       fields: ["title^50", "tracker_name^25", "languages_name^5", "body"],
-      order: order_hash).to_a
+      order: order_hash)
 
 
-    reject_merged_issues!(bounteous_issue_search)
+    reject_merged_issues!(bounteous_issue_search.to_a)
 
     {
       issues: bounteous_issue_search,
-      issues_total: bounteous_issue_search.count
+      issues_total: bounteous_issue_search.total_count
     }
   end
 
