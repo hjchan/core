@@ -11,12 +11,12 @@
           {{issue.title}}
         </a>
         <span>Posted by: {{issue.author.display_name}}</span>
-        <span>{{issue.created_at | timeAgoShort }}</span>
+        <span>{{issue.created_at | timeDiff }} ago</span>
         <p>{{issue.description}}</p>
         <span class="badge search-filter" ng-repeat="language in issue.tracker.languages">
           <span>{{language.name}}</span>
         </span>
-        <span>{{issue.updated_at | timeAgoShort }}</span>
+        <span>{{issue.updated_at | timeDiff }} ago</span>
         <span>{{issue.comment_count}} comments</span>
         <span>{{issue.bounty_total | dollars:{space:true} }}</span>
       </div>

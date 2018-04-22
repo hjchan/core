@@ -2,10 +2,7 @@ angular.module('app').controller('BountiesSearchController', function($scope, $r
   $scope.reset_form_data = function() {
     $scope.form_data = {
       direction: "desc",
-      order: "bounty_total",
-      can_add_bounty: "true",
-      languages: [],
-      trackers: []
+      order: "bounty_total"
     };
   };
 
