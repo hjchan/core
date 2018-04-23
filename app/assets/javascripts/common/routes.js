@@ -1,19 +1,5 @@
 angular.module('app').config(function ($routeProvider, defaultRouteOptions, personResolver) {
   $routeProvider.when('/', angular.extend({
-    templateUrl: 'app/home/timeline.html',
-    controller: 'HomeTimelineCtrl',
-    container: false,
-    trackEvent: 'View Homepage Timeline',
-    resolve: {
-      count: function($rootScope, $api) {
-        $api.people_count().then(function(count) {
-          $rootScope.people_count = count;
-        });
-      }
-    }
-  }, defaultRouteOptions));
-
-  $routeProvider.when('/test', angular.extend({
     templateUrl: 'app/home/landing_page.html',
     controller: 'LandingPageController',
     trackEvent: 'View Homepage',
@@ -66,12 +52,6 @@ angular.module('app').config(function ($routeProvider, defaultRouteOptions, pers
     controller: "AuthConfirmController",
     resolve: { person: personResolver },
     trackEvent: false
-  }, defaultRouteOptions));
-
-  $routeProvider.when('/bounties/search', angular.extend({
-    templateUrl: 'app/bounties/search.html',
-    controller: 'BountiesSearchController',
-    trackEvent: 'View Bounties Search'
   }, defaultRouteOptions));
 
   $routeProvider.when('/cart', angular.extend({
