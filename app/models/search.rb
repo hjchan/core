@@ -57,12 +57,12 @@ class Search < ApplicationRecord
     max = params[:max].present? ? params[:max].to_f : 10_000.0
     order = ["bounty_total", "backers_count", "earliest_bounty", "participants_count", "thumbs_up_count", "remote_created_at"].include?(params[:order]) ? params[:order] : "bounty_total"
     direction = ['asc', 'desc'].include?(params[:direction]) ? params[:direction] : 'asc'
-    languages = params[:languages].present? ? params[:languages].split(',').map(&:to_i) : []
-    trackers = params[:trackers].present? ? params[:trackers].split(',').map(&:to_i) : []
+    languages = params[:languages].present? ? params[:languages].split(',') : []
+    trackers = params[:trackers].present? ? params[:trackers].split(',') : []
     #build a "with" hash for the filtering options. order hash for sorting options.
     with_hash = {
-      tracker_id: trackers,
-      language_id: languages,
+      tracker_name: trackers,
+      languages_name: languages,
       can_add_bounty: true,
       bounty_total: { gte: min, lte: max },
     }.select {|param, value| value.present?}

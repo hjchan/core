@@ -59,20 +59,20 @@
           <div class="form-group">
             <label>Language:</label>
             <input name="input" type="text" class="form-control" placeholder="Search for languages"
-                   ng-model="languages_input"
-                   typeahead="language as language.name for language in all_languages | filter:$viewValue | limitTo: 8"
+                   ng-model="select_form.languages_input"
+                   typeahead="language as language.name for language in select_form.all_languages | filter:$viewValue | limitTo: 8"
                    typeahead-editable="false"
                    autocomplete="off"
                    typeahead-wait-ms="150"
-            >
+                   typeahead-on-select="selectLanguage($item, $model, $label)">
           </div>
 
-          <div class="filter-box" collapse="languages_loaded.length <= 0">
-            <span class="badge search-filter" ng-repeat="language in languages_loaded">
+          <div class="filter-box" collapse="form_data.languages.length <= 0">
+            <span class="badge search-filter" ng-repeat="language in form_data.languages">
               <button type="button" class="close" ng-click="remove_language(language)">
                 &times;
               </button>
-              <span>{{language.name}}</span>
+              <span>{{language}}</span>
             </span>
           </div>
         </div>
@@ -81,19 +81,20 @@
           <div class="form-group">
             <label class="label-control">Limit to projects:</label>
             <input name="input" type="text" class="search form-control" placeholder="Search in projects"
-                   ng-model="trackers_input"
+                   ng-model="select_form.trackers_input"
                    typeahead="tracker as tracker.name for tracker in do_tracker_typeahead($viewValue)"
                    typeahead-editable="false"
                    autocomplete="off"
-                   typeahead-wait-ms="150">
+                   typeahead-wait-ms="150"
+                   typeahead-on-select="selectTracker($item, $model, $label)">
           </div>
 
-          <div class="project-box" collapse="trackers_loaded <= 0">
-            <span class="badge search-filter" ng-repeat="tracker in trackers_loaded">
+          <div class="project-box" collapse="form_data.trackers <= 0">
+            <span class="badge search-filter" ng-repeat="tracker in form_data.trackers">
               <button type="button" class="close" ng-click="remove_tracker(tracker)">
                 &times;
               </button>
-              {{tracker.name}}
+              {{tracker}}
             </span>
           </div>
         </div>
