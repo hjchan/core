@@ -23,9 +23,9 @@ angular.module('app').controller('LandingPageController', function ($scope, $api
 
   // Top Backers
   $api.v2.teams({
-    homepage_featured: true
+    top_rewards: true
   }).then(function(response) {
-    $scope.featuredTeams = response.data;
+    $scope.topTeams = response.data;
   });
 
   // Top Hunters
