@@ -80,16 +80,18 @@
     <div class="top-team">
       <div class="featured-header-icon">
         <h2>Top Teams</h2>
-        <a ng-href="/teams/{{team.slug}}" ng-repeat="team in topTeams">
-          <img class="img-circle" ng-src="{{team.image_url_small}}" tooltip="{{team.name}}" tooltip-placement="bottom" />
-          <div class="mt-3">{{team.name}}</div>
-        </a>
-        <div class="mt-3">{{team.hunter_awarded}} hunter awarded</div>
-        <div class="mt-3">{{team.total_rewards | dollars}} total rewards</div>
+        <div ng-repeat="team in topTeams">
+          <a ng-href="/teams/{{team.slug}}">
+            <img class="img-circle" ng-src="{{team.image_url_small}}" tooltip="{{team.name}}" tooltip-placement="bottom" />
+            <div class="mt-3">{{team.name}}</div>
+          </a>
+          <div class="mt-3">{{team.hunter_awarded}} hunter awarded</div>
+          <div class="mt-3">{{team.total_rewards | dollars}} total rewards</div>
+        </div>
       </div>
     </div>
   </div>
-  
+
   <div class="col-sm-9">
     <div ng-include="'app/bounties/search.html'" ng-controller="BountiesSearchController"></div>
   </div>
