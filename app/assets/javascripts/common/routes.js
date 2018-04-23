@@ -2,6 +2,7 @@ angular.module('app').config(function ($routeProvider, defaultRouteOptions, pers
   $routeProvider.when('/', angular.extend({
     templateUrl: 'app/home/landing_page.html',
     controller: 'LandingPageController',
+    container: false,
     trackEvent: 'View Homepage',
     resolve: {
       count: function($rootScope, $api) {
