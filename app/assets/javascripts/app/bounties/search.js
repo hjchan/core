@@ -52,7 +52,9 @@ angular.module('app').controller('BountiesSearchController', function($scope, $r
   };
 
   $scope.selectTracker = function($item, $model, $label){
-    $scope.form_data.trackers.push($item.name);
+    if($scope.form_data.trackers.indexOf($item.name) === -1) {
+      $scope.form_data.trackers.push($item.name);
+    }
     $scope.select_form.trackers_input = "";
   }
   
@@ -70,7 +72,9 @@ angular.module('app').controller('BountiesSearchController', function($scope, $r
   }
 
   $scope.selectLanguage = function($item, $model, $label){
-    $scope.form_data.languages.push($item.name);
+    if($scope.form_data.languages.indexOf($item.name) === -1) {
+      $scope.form_data.languages.push($item.name);
+    }
     $scope.select_form.languages_input = "";
   }
 
